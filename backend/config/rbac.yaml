@@ -1,0 +1,28 @@
+roles:
+  Admin:
+    - resource: "*"
+      action: "*"
+      decision: "Allow"
+  Doctor:
+    - resource: "patients"
+      action: "view"
+      decision: "Allow"
+    - resource: "patients"
+      action: "create"
+      decision: "Allow"
+    - resource: "prescriptions"
+      action: "view"
+      decision: "Allow"
+    - resource: "prescriptions"
+      action: "modify"
+      decision: "Allow"
+  Nurse:
+    - resource: "patients"
+      action: "view"
+      decision: "Allow"
+    - resource: "prescriptions"
+      action: "view"
+      decision: "Allow"
+    - resource: "prescriptions"
+      action: "modify"
+      decision: "Deny"

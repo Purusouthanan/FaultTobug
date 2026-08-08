@@ -3,7 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import os
 import json
-from . import database
+from . import database, models
+from .auth import auth_router
+from .routers import patients, prescriptions
+
+# Create database tables
+models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="Incident-to-Regression Automation Platform")
 
@@ -21,6 +26,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(auth_router)
+app.include_router(patients.router)
+app.include_router(prescriptions.router)
 
 @app.get("/health")
 def health_check():

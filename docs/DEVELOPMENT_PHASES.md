@@ -299,7 +299,7 @@ Complete: README, PRD, System Architecture, API docs, Experiment report, Metrics
 | Phase | Status | Completion % | Tests | Evidence | Blockers |
 |-------|--------|--------------|-------|----------|----------|
 | 0 | COMPLETED | 100% | - | - | - |
-| 1 | NOT_STARTED | 0% | - | - | - |
+| 1 | COMPLETED | 100% | 3 | simulator tests | - |
 | 2 | NOT_STARTED | 0% | - | - | - |
 | 3 | NOT_STARTED | 0% | - | - | - |
 | 4 | NOT_STARTED | 0% | - | - | - |
