@@ -1,0 +1,126 @@
+# Analysis rules for the Incident Analysis Engine
+# Edit this file to add new roles, action keywords, or failure indicators
+# without changing any application code.
+
+role_keywords:
+  - nurse
+  - doctor
+  - admin
+  - receptionist
+
+action_keywords:
+  modify:
+    - modify
+    - modified
+    - update
+    - updated
+    - edit
+    - edited
+    - change
+    - changed
+    - patch
+    - alter
+    - altered
+  view:
+    - view
+    - viewed
+    - read
+    - get
+    - access
+    - accessed
+    - see
+    - retrieve
+    - retrieved
+    - fetch
+  create:
+    - create
+    - created
+    - add
+    - added
+    - register
+    - registered
+    - post
+    - submit
+    - submitted
+  delete:
+    - delete
+    - deleted
+    - remove
+    - removed
+    - cancel
+    - cancelled
+
+resource_keywords:
+  prescriptions:
+    - prescription
+    - prescriptions
+    - medication
+    - drug
+  patients:
+    - patient
+    - patients
+    - record
+    - file
+  appointments:
+    - appointment
+    - appointments
+    - schedule
+
+# Maps (role, action, resource) to expected HTTP behaviour via rbac.yaml lookup
+# These strings are checked in the incident text to determine actual_result
+failure_indicators:
+  unexpected_success:
+    - successfully
+    - was able to
+    - managed to
+    - could
+    - succeeded
+    - allowed to
+  unexpected_denial:
+    - denied
+    - blocked
+    - could not
+    - unable to
+    - received 403
+    - "403"
+    - forbidden
+    - rejected
+    - tried to
+    - attempted to
+
+# Failure category classification rules (evaluated in order, first match wins)
+failure_categories:
+  Authorization:
+    - permission
+    - unauthorized
+    - forbidden
+    - access denied
+    - not allowed
+    - role
+  Authentication:
+    - login
+    - token
+    - credentials
+    - not authenticated
+    - session
+  Validation:
+    - invalid
+    - validation
+    - malformed
+    - missing field
+    - bad request
+  Resource Access:
+    - not found
+    - "404"
+    - does not exist
+    - missing record
+  Duplicate Operation:
+    - already exists
+    - duplicate
+    - conflict
+  Workflow/State:
+    - wrong state
+    - workflow
+    - discharge
+    - admitted
+    - status

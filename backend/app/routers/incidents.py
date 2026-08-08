@@ -4,6 +4,7 @@ from typing import List
 from ..database import get_db
 from ..models import Incident
 from ..schemas import IncidentCreate, IncidentUpdate, IncidentResponse
+from ..analysis_engine import analyze_incident
 
 router = APIRouter(prefix="/incidents", tags=["Incidents"])
 
@@ -36,6 +37,38 @@ def update_incident(id: int, update_data: IncidentUpdate, db: Session = Depends(
     for key, value in update_dict.items():
         setattr(incident, key, value)
         
+    db.commit()
+    db.refresh(incident)
+    return incident
+
+@router.post("/{id}/analyze", response_model=IncidentResponse)
+def analyze_incident_endpoint(id: int, db: Session = Depends(get_db)):
+    """
+    Trigger the Analysis Engine on an incident.
+    Extracts role, action, resource, expected/actual behavior, and failure category.
+    Transitions the incident status to ANALYZED.
+    """
+    incident = db.query(Incident).filter(Incident.id == id).first()
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+
+    result = analyze_incident(incident.description)
+
+    # Persist extracted data back to the incident record
+    incident.extracted_role     = result.role
+    incident.extracted_action   = result.action
+    incident.extracted_resource = result.resource
+    incident.extracted_endpoint = result.endpoint
+    incident.extracted_method   = result.http_method
+    incident.expected_result    = result.expected_result
+    incident.actual_result      = result.actual_result
+    incident.failure_category   = result.failure_category
+
+    if result.failure_category == "Unknown" and result.confidence == "low":
+        incident.status = "ERROR"
+    else:
+        incident.status = "ANALYZED"
+
     db.commit()
     db.refresh(incident)
     return incident

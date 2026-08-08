@@ -301,7 +301,7 @@ Complete: README, PRD, System Architecture, API docs, Experiment report, Metrics
 | 0 | COMPLETED | 100% | - | - | - |
 | 1 | COMPLETED | 100% | 3 | simulator tests | - |
 | 2 | COMPLETED | 100% | 2 | incident tests | - |
-| 3 | NOT_STARTED | 0% | - | - | - |
+| 3 | COMPLETED | 100% | 7 | analysis engine tests | - |
 | 4 | NOT_STARTED | 0% | - | - | - |
 | 5 | NOT_STARTED | 0% | - | - | - |
 | 6 | NOT_STARTED | 0% | - | - | - |
