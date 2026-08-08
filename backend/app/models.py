@@ -29,3 +29,22 @@ class Prescription(Base):
     instructions = Column(String)
 
     patient = relationship("Patient", back_populates="prescriptions")
+
+class Incident(Base):
+    __tablename__ = "incidents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    description = Column(String, nullable=False)
+    status = Column(String, default="OPEN", index=True)
+    
+    extracted_role = Column(String, nullable=True)
+    extracted_action = Column(String, nullable=True)
+    extracted_resource = Column(String, nullable=True)
+    extracted_endpoint = Column(String, nullable=True)
+    extracted_method = Column(String, nullable=True)
+    expected_result = Column(String, nullable=True)
+    actual_result = Column(String, nullable=True)
+    failure_category = Column(String, nullable=True)
+    
+    reproduction_steps = Column(String, nullable=True) # Will store JSON string for SQLite compatibility
+
