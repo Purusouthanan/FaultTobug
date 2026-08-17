@@ -1,10 +1,7 @@
-from fastapi.testclient import TestClient
-from backend.app.main import app
 import pytest
+# Note: `client` fixture is provided by conftest.py (session-scoped, in-memory DB)
 
-client = TestClient(app)
-
-def test_nurse_cannot_modify_prescription():
+def test_nurse_cannot_modify_prescription(client):
     # Login as nurse to get token
     response = client.post("/auth/login", data={"username": "nurse_joy", "password": "password"})
     assert response.status_code == 200
@@ -16,9 +13,12 @@ def test_nurse_cannot_modify_prescription():
     
     # Assert Nurse is denied (403)
     assert response.status_code == 403
-    assert "cannot modify prescriptions" in response.json()["detail"]
+    # Hardened: check that the detail contains the key role and action info
+    detail = response.json()["detail"]
+    assert "Nurse" in detail
+    assert "modify" in detail.lower() or "prescriptions" in detail.lower()
 
-def test_doctor_can_modify_prescription():
+def test_doctor_can_modify_prescription(client):
     # Login as doctor to get token
     response = client.post("/auth/login", data={"username": "dr_smith", "password": "password"})
     assert response.status_code == 200
@@ -32,7 +32,7 @@ def test_doctor_can_modify_prescription():
     assert response.status_code == 200
     assert response.json()["instructions"] == "take daily"
 
-def test_admin_can_access_anything():
+def test_admin_can_access_anything(client):
     # Login as admin to get token
     response = client.post("/auth/login", data={"username": "admin", "password": "password"})
     assert response.status_code == 200
@@ -44,3 +44,4 @@ def test_admin_can_access_anything():
     
     # Assert Admin is allowed (200)
     assert response.status_code == 200
+

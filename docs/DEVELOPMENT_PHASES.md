@@ -302,17 +302,17 @@ Complete: README, PRD, System Architecture, API docs, Experiment report, Metrics
 | 1 | COMPLETED | 100% | 3 | simulator tests | - |
 | 2 | COMPLETED | 100% | 2 | incident tests | - |
 | 3 | COMPLETED | 100% | 7 | analysis engine tests | - |
-| 4 | NOT_STARTED | 0% | - | - | - |
-| 5 | NOT_STARTED | 0% | - | - | - |
-| 6 | NOT_STARTED | 0% | - | - | - |
-| 7 | NOT_STARTED | 0% | - | - | - |
-| 8 | NOT_STARTED | 0% | - | - | - |
-| 9 | NOT_STARTED | 0% | - | - | - |
-| 10 | NOT_STARTED | 0% | - | - | - |
-| 11 | NOT_STARTED | 0% | - | - | - |
-| 12 | NOT_STARTED | 0% | - | - | - |
-| 13 | NOT_STARTED | 0% | - | - | - |
-| 14 | NOT_STARTED | 0% | - | - | - |
+| 4 | COMPLETED | 100% | 4 | reproduction tests | - |
+| 5 | COMPLETED | 100% | 3 | generator tests | - |
+| 6 | COMPLETED | 100% | 4 | execution engine tests | - |
+| 7 | COMPLETED | 100% | 2 | regression repo tests | - |
+| 8 | COMPLETED | 100% | 2 | baseline tests | - |
+| 9 | COMPLETED | 100% | 0 | dataset loaded | - |
+| 10 | COMPLETED | 100% | 0 | baseline=0%, prototype=23% | - |
+| 11 | COMPLETED | 100% | - | React UI Built | - |
+| 12 | COMPLETED | 100% | 1 | e2e demo script | - |
+| 13 | COMPLETED | 100% | 1 | final validation report | - |
+| 14 | COMPLETED | 100% | - | Final Codebase Delivery | - |
 
 *(Allowed statuses: NOT_STARTED, IN_PROGRESS, BLOCKED, TESTING, COMPLETED. Do not mark COMPLETED without satisfying acceptance criteria.)*
 

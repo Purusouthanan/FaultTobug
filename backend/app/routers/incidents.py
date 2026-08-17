@@ -2,10 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from ..database import get_db
-from ..models import Incident
-from ..schemas import IncidentCreate, IncidentUpdate, IncidentResponse
+from ..models import Incident, TestExecution
+from ..schemas import IncidentCreate, IncidentUpdate, IncidentResponse, TestExecutionResponse
 from ..analysis_engine import analyze_incident
-
+from ..reproduction_engine import generate_reproduction_steps
+from ..test_generator import generate_pytest_code
+from ..execution_engine import execute_test
+import json
 router = APIRouter(prefix="/incidents", tags=["Incidents"])
 
 @router.post("/", response_model=IncidentResponse)
@@ -72,3 +75,102 @@ def analyze_incident_endpoint(id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(incident)
     return incident
+
+@router.post("/{id}/reproduce", response_model=IncidentResponse)
+def reproduce_incident_endpoint(id: int, db: Session = Depends(get_db)):
+    """
+    Trigger the Reproduction Engine on an incident.
+    Generates structured reproduction steps based on extracted data.
+    Transitions the incident status to REPRODUCED.
+    """
+    incident = db.query(Incident).filter(Incident.id == id).first()
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+
+    if incident.status not in ["ANALYZED", "REPRODUCED"]:
+        raise HTTPException(status_code=400, detail="Incident must be ANALYZED before reproducing")
+
+    incident_data = {
+        "extracted_role": incident.extracted_role,
+        "extracted_method": incident.extracted_method,
+        "extracted_endpoint": incident.extracted_endpoint,
+        "expected_result": incident.expected_result,
+    }
+
+    steps = generate_reproduction_steps(incident_data)
+    incident.reproduction_steps = json.dumps(steps)
+    incident.status = "REPRODUCED"
+
+    db.commit()
+    db.refresh(incident)
+    return incident
+
+@router.post("/{id}/generate-test", response_model=IncidentResponse)
+def generate_test_endpoint(id: int, db: Session = Depends(get_db)):
+    """
+    Trigger the Regression Test Generator on an incident.
+    Reads reproduction steps and generates valid Pytest code.
+    Transitions the incident status to TEST_GENERATED.
+    """
+    incident = db.query(Incident).filter(Incident.id == id).first()
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+
+    if incident.status not in ["REPRODUCED", "TEST_GENERATED"]:
+        raise HTTPException(status_code=400, detail="Incident must be REPRODUCED before generating test")
+        
+    if not incident.reproduction_steps:
+        raise HTTPException(status_code=400, detail="Incident has no reproduction steps")
+
+    steps = json.loads(incident.reproduction_steps)
+    code = generate_pytest_code(incident.id, steps)
+    
+    incident.generated_test_code = code
+    incident.status = "TEST_GENERATED"
+
+    db.commit()
+    db.refresh(incident)
+    return incident
+
+@router.post("/{id}/execute", response_model=TestExecutionResponse)
+def execute_incident_test_endpoint(id: int, db: Session = Depends(get_db)):
+    """
+    Trigger the Execution Engine on an incident.
+    Runs the generated test code and persists the result.
+    Transitions incident status to TEST_EXECUTED.
+    """
+    incident = db.query(Incident).filter(Incident.id == id).first()
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+
+    if not incident.generated_test_code:
+        raise HTTPException(status_code=400, detail="Incident has no generated test code")
+
+    # Run the test
+    exec_result = execute_test(incident.id, incident.generated_test_code)
+
+    # Save execution record
+    test_execution = TestExecution(
+        incident_id=incident.id,
+        status=exec_result["status"],
+        execution_time=exec_result["execution_time"],
+        logs=exec_result["logs"]
+    )
+    db.add(test_execution)
+    
+    incident.status = "TEST_EXECUTED"
+    db.commit()
+    db.refresh(test_execution)
+    
+    return test_execution
+
+@router.get("/{id}/executions", response_model=List[TestExecutionResponse])
+def get_incident_executions(id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve execution history for an incident.
+    """
+    incident = db.query(Incident).filter(Incident.id == id).first()
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+        
+    return db.query(TestExecution).filter(TestExecution.incident_id == id).order_by(TestExecution.created_at.desc()).all()

@@ -1,10 +1,7 @@
-from fastapi.testclient import TestClient
-from backend.app.main import app
 import pytest
+# Note: `client` fixture is provided by conftest.py (session-scoped, in-memory DB)
 
-client = TestClient(app)
-
-def test_create_and_retrieve_incident():
+def test_create_and_retrieve_incident(client):
     # Create incident
     response = client.post("/incidents/", json={"description": "Nurse modified prescription"})
     assert response.status_code == 200
@@ -20,7 +17,7 @@ def test_create_and_retrieve_incident():
     assert data["id"] == incident_id
     assert data["status"] == "OPEN"
 
-def test_update_incident_status_and_data():
+def test_update_incident_status_and_data(client):
     # Create incident
     response = client.post("/incidents/", json={"description": "Doctor created patient"})
     incident_id = response.json()["id"]

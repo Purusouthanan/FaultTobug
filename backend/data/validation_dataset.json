@@ -1,0 +1,127 @@
+[
+  {
+    "description": "Doctor attempted to view a patient they are not assigned to and it allowed them.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Nurse tried to delete a prescription record which should be forbidden.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Anonymous user tried to list all patients without logging in.",
+    "ground_truth_category": "Authentication",
+    "ground_truth_expected_behavior": "Deny (HTTP 401)"
+  },
+  {
+    "description": "Admin successfully created a new patient.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200 or 201)"
+  },
+  {
+    "description": "Doctor requested a prescription with a completely invalid ID format like 'abc'.",
+    "ground_truth_category": "Validation",
+    "ground_truth_expected_behavior": "Deny (HTTP 422)"
+  },
+  {
+    "description": "Nurse fetched patient ID 99999 which does not exist.",
+    "ground_truth_category": "Resource access",
+    "ground_truth_expected_behavior": "Deny (HTTP 404)"
+  },
+  {
+    "description": "Doctor successfully modified the dosage on a prescription assigned to them.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200)"
+  },
+  {
+    "description": "User logged in with expired mock token.",
+    "ground_truth_category": "Authentication",
+    "ground_truth_expected_behavior": "Deny (HTTP 401)"
+  },
+  {
+    "description": "Nurse attempted to create a new patient.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Doctor tried to delete patient ID 1.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Admin deleted a prescription successfully.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200)"
+  },
+  {
+    "description": "Anonymous user attempted to create a prescription.",
+    "ground_truth_category": "Authentication",
+    "ground_truth_expected_behavior": "Deny (HTTP 401)"
+  },
+  {
+    "description": "Nurse updated patient status successfully.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200)"
+  },
+  {
+    "description": "Doctor created a prescription with missing medication field.",
+    "ground_truth_category": "Validation",
+    "ground_truth_expected_behavior": "Deny (HTTP 422)"
+  },
+  {
+    "description": "Admin fetched a prescription that was already deleted (ID 999).",
+    "ground_truth_category": "Resource access",
+    "ground_truth_expected_behavior": "Deny (HTTP 404)"
+  },
+  {
+    "description": "Doctor requested patient data using an invalid JWT format.",
+    "ground_truth_category": "Authentication",
+    "ground_truth_expected_behavior": "Deny (HTTP 401)"
+  },
+  {
+    "description": "Nurse modified prescription but left the dosage field entirely empty.",
+    "ground_truth_category": "Validation",
+    "ground_truth_expected_behavior": "Deny (HTTP 422)"
+  },
+  {
+    "description": "Admin tried to create a patient with a duplicate name.",
+    "ground_truth_category": "Duplicate operation",
+    "ground_truth_expected_behavior": "Deny (HTTP 400)"
+  },
+  {
+    "description": "Doctor tried to view incident logs.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Anonymous user fetched public hospital information endpoint.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200)"
+  },
+  {
+    "description": "Admin patched a patient with invalid state transition.",
+    "ground_truth_category": "Validation",
+    "ground_truth_expected_behavior": "Deny (HTTP 422)"
+  },
+  {
+    "description": "Nurse viewed a patient they are assigned to successfully.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200)"
+  },
+  {
+    "description": "Doctor attempted to modify a prescription that belongs to another doctor.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Nurse deleted a patient record by accident.",
+    "ground_truth_category": "Authorization",
+    "ground_truth_expected_behavior": "Deny (HTTP 403)"
+  },
+  {
+    "description": "Admin created a prescription successfully.",
+    "ground_truth_category": "Workflow",
+    "ground_truth_expected_behavior": "Allow (HTTP 200 or 201)"
+  }
+]

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Float, DateTime
 from sqlalchemy.orm import relationship
+import datetime
 from .database import Base
 
 class User(Base):
@@ -47,4 +48,40 @@ class Incident(Base):
     failure_category = Column(String, nullable=True)
     
     reproduction_steps = Column(String, nullable=True) # Will store JSON string for SQLite compatibility
+    generated_test_code = Column(String, nullable=True)
+    baseline_test_code = Column(String, nullable=True)
 
+    executions = relationship("TestExecution", back_populates="incident")
+
+class TestExecution(Base):
+    __tablename__ = "test_executions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    incident_id = Column(Integer, ForeignKey("incidents.id"))
+    status = Column(String) # PASS, FAIL, ERROR
+    execution_time = Column(Float, nullable=True) # in seconds
+    logs = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    incident = relationship("Incident", back_populates="executions")
+
+class RegressionTest(Base):
+    __tablename__ = "regression_tests"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    incident_id = Column(Integer, ForeignKey("incidents.id"))
+    test_code = Column(String)
+    registered_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    incident = relationship("Incident")
+
+class SuiteExecution(Base):
+    __tablename__ = "suite_executions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    total_tests = Column(Integer, default=0)
+    passed_tests = Column(Integer, default=0)
+    failed_tests = Column(Integer, default=0)
+    execution_time = Column(Float, nullable=True) # in seconds
+    logs = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

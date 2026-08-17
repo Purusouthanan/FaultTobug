@@ -11,10 +11,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../"))
 
 from backend.app.analysis_engine import analyze_incident
-from fastapi.testclient import TestClient
-from backend.app.main import app
-
-client = TestClient(app)
+# Note: `client` fixture is provided by conftest.py (session-scoped, in-memory DB)
 
 
 # ---------------------------------------------------------------------------
@@ -85,7 +82,7 @@ def test_endpoint_and_method_mapping():
 # Integration tests — analysis via the API endpoint
 # ---------------------------------------------------------------------------
 
-def test_api_analyze_endpoint_full_flow():
+def test_api_analyze_endpoint_full_flow(client):
     """Create an incident, run /analyze, verify the DB record is updated."""
     # Create incident
     create_resp = client.post(
@@ -108,7 +105,7 @@ def test_api_analyze_endpoint_full_flow():
     assert data["failure_category"] == "Authorization"
 
 
-def test_api_analyze_unknown_incident_marks_error():
+def test_api_analyze_unknown_incident_marks_error(client):
     """Vague incident that cannot be analyzed should be marked ERROR."""
     create_resp = client.post(
         "/incidents/",

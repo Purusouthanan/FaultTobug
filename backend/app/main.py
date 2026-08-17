@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 import os
 import json
 from . import database, models
 from .auth import auth_router
-from .routers import patients, prescriptions, incidents
+from .routers import patients, prescriptions, incidents, regression, baseline
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -32,6 +33,8 @@ app.include_router(auth_router)
 app.include_router(patients.router)
 app.include_router(prescriptions.router)
 app.include_router(incidents.router)
+app.include_router(regression.router)
+app.include_router(baseline.router)
 
 @app.get("/health")
 def health_check():
@@ -40,8 +43,8 @@ def health_check():
 @app.get("/db-health")
 def db_health_check(db: Session = Depends(database.get_db)):
     try:
-        # Check database connectivity
-        db.execute("SELECT 1")
+        # Check database connectivity (SQLAlchemy 2.0 requires text() for raw SQL)
+        db.execute(text("SELECT 1"))
         return {"status": "ok", "message": "Database is connected"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
