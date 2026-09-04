@@ -23,3 +23,10 @@ export interface Execution {
   logs: string;
   created_at: string;
 }
+
+export interface Test {
+  id: number;
+  incident_id: number;
+  test_code: string;
+  created_at: string;
+}

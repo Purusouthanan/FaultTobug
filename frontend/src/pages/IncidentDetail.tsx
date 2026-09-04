@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Play, Search, Network, Code2, FlaskConical } from 'lucide-react';
-import { Incident, Execution } from '../types';
+import type { Incident, Execution } from '../types';
 
 export default function IncidentDetail() {
   const { id } = useParams();

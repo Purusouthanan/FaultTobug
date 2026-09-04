@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Activity, CheckCircle2, XCircle, TrendingUp, ShieldAlert, Cpu } from 'lucide-react';
-import { Incident } from '../types';
+import type { Incident } from '../types';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({

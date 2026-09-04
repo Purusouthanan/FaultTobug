@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldAlert, ArrowRight, ServerCrash, Activity } from 'lucide-react';
-import { Incident } from '../types';
+import type { Incident } from '../types';
 
 export default function IncidentList() {
   const [incidents, setIncidents] = useState<Incident[]>([]);

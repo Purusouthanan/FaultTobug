@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FlaskConical, Play, CheckCircle2, XCircle } from 'lucide-react';
-import { Execution } from '../types';
+import type { Execution, Test } from '../types';
 
 export default function RegressionSuite() {
-  const [tests, setTests] = useState<any[]>([]);
+  const [tests, setTests] = useState<Test[]>([]);
   const [executions, setExecutions] = useState<Execution[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
