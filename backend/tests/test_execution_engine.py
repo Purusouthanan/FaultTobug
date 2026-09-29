@@ -64,3 +64,28 @@ def test_execute_fails_without_code(client):
     response = client.post(f"/incidents/{incident_id}/execute")
     assert response.status_code == 400
     assert "no generated test code" in response.json()["detail"]
+
+def test_execution_engine_rejects_unsafe_code():
+    malicious_code = """
+import os
+
+def test_hack():
+    os.system("echo compromised")
+"""
+    result = execute_test(777, malicious_code)
+    assert result["status"] == "SECURITY_VIOLATION"
+    assert "SECURITY AUDIT FAILED" in result["logs"]
+    assert "Forbidden import 'os'" in result["logs"]
+
+def test_execution_engine_timeout():
+    hanging_code = """
+import time
+
+def test_hang(client):
+    time.sleep(5)
+"""
+    # Enforce strict 1-second timeout
+    result = execute_test(778, hanging_code, timeout=1)
+    assert result["status"] == "TIMEOUT"
+    assert "exceeded strict safety timeout" in result["logs"]
+

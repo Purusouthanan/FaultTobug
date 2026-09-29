@@ -77,10 +77,11 @@ def analyze_incident_endpoint(id: int, db: Session = Depends(get_db)):
     return incident
 
 @router.post("/{id}/reproduce", response_model=IncidentResponse)
-def reproduce_incident_endpoint(id: int, db: Session = Depends(get_db)):
+def reproduce_incident_endpoint(id: int, include_boundaries: bool = False, db: Session = Depends(get_db)):
     """
     Trigger the Reproduction Engine on an incident.
     Generates structured reproduction steps based on extracted data.
+    When include_boundaries=True, adds multi-role RBAC boundary checks (Doctor vs Nurse vs Billing Clerk).
     Transitions the incident status to REPRODUCED.
     """
     incident = db.query(Incident).filter(Incident.id == id).first()
@@ -92,12 +93,14 @@ def reproduce_incident_endpoint(id: int, db: Session = Depends(get_db)):
 
     incident_data = {
         "extracted_role": incident.extracted_role,
+        "extracted_action": incident.extracted_action,
+        "extracted_resource": incident.extracted_resource,
         "extracted_method": incident.extracted_method,
         "extracted_endpoint": incident.extracted_endpoint,
         "expected_result": incident.expected_result,
     }
 
-    steps = generate_reproduction_steps(incident_data)
+    steps = generate_reproduction_steps(incident_data, include_boundaries=include_boundaries)
     incident.reproduction_steps = json.dumps(steps)
     incident.status = "REPRODUCED"
 

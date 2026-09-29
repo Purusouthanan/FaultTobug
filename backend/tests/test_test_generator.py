@@ -11,7 +11,7 @@ def test_generate_pytest_code_unit():
     code = generate_pytest_code(123, steps)
     
     assert "def test_incident_123_regression(client):" in code
-    assert "headers = {'Authorization': 'Bearer mock_nurse_token'}" in code
+    assert "headers = {'Authorization': 'Bearer nurse_joy'}" in code
     assert "response = client.patch('/prescriptions/1', headers=headers, json={})" in code
     assert "assert response.status_code == 200" in code
     
@@ -60,3 +60,29 @@ def test_generate_test_fails_if_not_reproduced(client):
     response = client.post(f"/incidents/{incident_id}/generate-test")
     assert response.status_code == 400
     assert "REPRODUCED before generating test" in response.json()["detail"]
+
+def test_generate_pytest_code_multi_role_rbac_matrix():
+    steps = [
+        {"step": 1, "type": "login", "role": "Nurse"},
+        {"step": 2, "type": "request", "method": "PATCH", "endpoint": "/prescriptions/1"},
+        {"step": 3, "type": "assert", "expected_result": "Deny (HTTP 403)"},
+        {"step": 4, "type": "login", "role": "Doctor", "is_boundary_check": True},
+        {"step": 5, "type": "request", "method": "PATCH", "endpoint": "/prescriptions/1", "is_boundary_check": True},
+        {"step": 6, "type": "assert", "expected_result": "Allow (HTTP 200)", "is_boundary_check": True},
+        {"step": 7, "type": "login", "role": "Billing Clerk", "is_boundary_check": True},
+        {"step": 8, "type": "request", "method": "PATCH", "endpoint": "/prescriptions/1", "is_boundary_check": True},
+        {"step": 9, "type": "assert", "expected_result": "Deny (HTTP 403)", "is_boundary_check": True},
+    ]
+    
+    code = generate_pytest_code(99, steps)
+    
+    assert "def test_incident_99_regression(client):" in code
+    # Nurse primary
+    assert "Bearer nurse_joy" in code
+    assert "assert response.status_code == 403" in code
+    # Doctor boundary
+    assert "Bearer dr_smith" in code
+    assert "assert response.status_code == 200" in code
+    # Billing Clerk boundary
+    assert "Bearer clerk_bob" in code
+

@@ -83,6 +83,11 @@ RESOURCE_ENDPOINT_MAP = {
         "create": ("POST", "/appointments/"),
         "delete": ("DELETE","/appointments/{id}"),
     },
+    "billing": {
+        "view":   ("GET",  "/billing/"),
+        "create": ("POST", "/billing/"),
+        "delete": ("DELETE","/billing/{id}"),
+    },
 }
 
 
@@ -93,6 +98,8 @@ RESOURCE_ENDPOINT_MAP = {
 def _extract_role(text_lower: str, rules: dict) -> Optional[str]:
     for role in rules.get("role_keywords", []):
         if role.lower() in text_lower:
+            if "clerk" in role.lower() or "billing" in role.lower():
+                return "Billing Clerk"
             return role.capitalize()
     return None
 

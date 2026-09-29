@@ -6,7 +6,7 @@ import os
 import json
 from . import database, models
 from .auth import auth_router
-from .routers import patients, prescriptions, incidents, regression, baseline
+from .routers import patients, prescriptions, incidents, regression, baseline, metrics
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -35,6 +35,7 @@ app.include_router(prescriptions.router)
 app.include_router(incidents.router)
 app.include_router(regression.router)
 app.include_router(baseline.router)
+app.include_router(metrics.router)
 
 @app.get("/health")
 def health_check():

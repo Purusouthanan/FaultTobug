@@ -24,9 +24,48 @@ export interface Execution {
   created_at: string;
 }
 
+export interface SuiteExecution {
+  id: number;
+  total_tests: number;
+  passed_tests: number;
+  failed_tests: number;
+  execution_time?: number;
+  logs?: string;
+  created_at: string;
+}
+
 export interface Test {
   id: number;
   incident_id: number;
   test_code: string;
-  created_at: string;
+  registered_at?: string;
+  created_at?: string;
+}
+
+export interface SandboxStatus {
+  mode: string;
+  ast_scanning: string;
+  timeout_seconds: number;
+  secret_sanitization: string;
+}
+
+export interface MetricsSummary {
+  total_incidents: number;
+  status_counts: {
+    open: number;
+    analyzed: number;
+    reproduced: number;
+    generated: number;
+    executed: number;
+  };
+  manual_triage_time_per_incident_mins: number;
+  automated_conversion_avg_seconds: number;
+  speedup_multiplier: number;
+  total_engineer_hours_saved: number;
+  prototype_conversion_rate: number;
+  baseline_conversion_rate: number;
+  registered_regression_tests: number;
+  rbac_roles_supported: string[];
+  rbac_matrix_coverage_pct: number;
+  sandbox_status: SandboxStatus;
 }

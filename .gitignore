@@ -44,3 +44,7 @@ build/
 # Project specific
 backend/pytest_cache/
 backend/.pytest_cache/
+backend/.sandbox/
+*.db
+test_dynamic_exec_*.py
+

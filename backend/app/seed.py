@@ -21,7 +21,9 @@ def seed_data():
         admin = models.User(username="admin", role="Admin")
         doctor = models.User(username="dr_smith", role="Doctor")
         nurse = models.User(username="nurse_joy", role="Nurse")
-        db.add_all([admin, doctor, nurse])
+        receptionist = models.User(username="receptionist_amy", role="Receptionist")
+        clerk = models.User(username="clerk_bob", role="Billing Clerk")
+        db.add_all([admin, doctor, nurse, receptionist, clerk])
         db.commit()
 
         # Add Patients

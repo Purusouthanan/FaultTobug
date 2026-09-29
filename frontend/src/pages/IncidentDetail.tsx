@@ -91,13 +91,17 @@ export default function IncidentDetail() {
               return (
                 <div key={step.id} className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-                    isPast 
-                      ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' 
-                      : 'bg-gray-900 border-gray-700 text-gray-500'
+                    isCurrent
+                      ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.8)] ring-4 ring-blue-500/20 animate-pulse'
+                      : isPast 
+                        ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' 
+                        : 'bg-gray-900 border-gray-700 text-gray-500'
                   }`}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  <span className={`mt-3 text-xs font-semibold ${isPast ? 'text-blue-400' : 'text-gray-500'}`}>{step.label}</span>
+                  <span className={`mt-3 text-xs font-semibold ${isCurrent ? 'text-blue-300 font-bold' : isPast ? 'text-blue-400' : 'text-gray-500'}`}>
+                    {step.label}
+                  </span>
                 </div>
               );
             })}

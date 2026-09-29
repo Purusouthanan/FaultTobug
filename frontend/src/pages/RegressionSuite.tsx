@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { FlaskConical, Play, CheckCircle2, XCircle } from 'lucide-react';
-import type { Execution, Test } from '../types';
+import type { SuiteExecution, Test } from '../types';
 
 export default function RegressionSuite() {
   const [tests, setTests] = useState<Test[]>([]);
-  const [executions, setExecutions] = useState<Execution[]>([]);
+  const [executions, setExecutions] = useState<SuiteExecution[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
 
@@ -94,20 +94,28 @@ export default function RegressionSuite() {
             {executions.map(exec => (
               <div key={exec.id} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-xl">
                 <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-800">
-                  <div className="text-gray-400 text-sm">Suite Run #{exec.id}</div>
-                  <div className="text-gray-500 text-xs">{new Date(exec.executed_at).toLocaleString()}</div>
+                  <div>
+                    <div className="text-gray-300 font-semibold text-sm">Suite Run #{exec.id}</div>
+                    <div className="text-gray-500 text-xs">{exec.total_tests} Tests Executed</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-gray-500 text-xs">{new Date(exec.created_at).toLocaleString()}</div>
+                    {exec.execution_time && (
+                      <div className="text-blue-400 text-xs font-mono">{exec.execution_time.toFixed(2)}s</div>
+                    )}
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 bg-gray-950 rounded-lg border border-gray-800">
                     <div className="text-gray-500 text-xs mb-1">Passed</div>
                     <div className="text-2xl font-bold text-green-400 flex justify-center items-center gap-1">
-                      <CheckCircle2 className="w-5 h-5" /> {exec.total_passed}
+                      <CheckCircle2 className="w-5 h-5" /> {exec.passed_tests}
                     </div>
                   </div>
                   <div className="text-center p-3 bg-gray-950 rounded-lg border border-gray-800">
                     <div className="text-gray-500 text-xs mb-1">Failed</div>
                     <div className="text-2xl font-bold text-red-400 flex justify-center items-center gap-1">
-                      <XCircle className="w-5 h-5" /> {exec.total_failed}
+                      <XCircle className="w-5 h-5" /> {exec.failed_tests}
                     </div>
                   </div>
                 </div>

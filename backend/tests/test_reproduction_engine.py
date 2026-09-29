@@ -69,3 +69,35 @@ def test_reproduce_unassayed_incident_fails(client):
     response = client.post(f"/incidents/{incident_id}/reproduce")
     assert response.status_code == 400
     assert "ANALYZED before reproducing" in response.json()["detail"]
+
+def test_reproduction_multi_role_rbac_boundary_steps():
+    incident_data = {
+        "extracted_role": "Nurse",
+        "extracted_action": "modify",
+        "extracted_resource": "prescriptions",
+        "extracted_method": "PATCH",
+        "extracted_endpoint": "/prescriptions/{id}",
+        "expected_result": "Deny (HTTP 403)"
+    }
+    
+    steps = generate_reproduction_steps(incident_data, include_boundaries=True)
+    
+    # 3 primary steps + 2 boundary roles (Doctor, Billing Clerk) * 3 steps = 9 steps
+    assert len(steps) == 9
+    
+    # Primary role check
+    assert steps[0]["role"] == "Nurse"
+    assert steps[2]["expected_result"] == "Deny (HTTP 403)"
+    
+    # Doctor boundary check (Doctor CAN modify prescriptions -> Allow 200)
+    doctor_login = [s for s in steps if s.get("role") == "Doctor"][0]
+    assert doctor_login["is_boundary_check"] is True
+    doctor_assert = [s for s in steps if s.get("type") == "assert" and "Doctor" in s.get("description", "")][0]
+    assert doctor_assert["expected_result"] == "Allow (HTTP 200)"
+    
+    # Billing Clerk boundary check (Billing Clerk CANNOT modify prescriptions -> Deny 403)
+    clerk_login = [s for s in steps if s.get("role") == "Billing Clerk"][0]
+    assert clerk_login["is_boundary_check"] is True
+    clerk_assert = [s for s in steps if s.get("type") == "assert" and "Billing Clerk" in s.get("description", "")][0]
+    assert clerk_assert["expected_result"] == "Deny (HTTP 403)"
+

@@ -75,9 +75,11 @@ def _seed():
             return  # already seeded
 
         db.add_all([
-            _models.User(username="admin",     hashed_password="ignored", role="Admin"),
-            _models.User(username="dr_smith",  hashed_password="ignored", role="Doctor"),
-            _models.User(username="nurse_joy", hashed_password="ignored", role="Nurse"),
+            _models.User(username="admin",            hashed_password="ignored", role="Admin"),
+            _models.User(username="dr_smith",         hashed_password="ignored", role="Doctor"),
+            _models.User(username="nurse_joy",        hashed_password="ignored", role="Nurse"),
+            _models.User(username="receptionist_amy", hashed_password="ignored", role="Receptionist"),
+            _models.User(username="clerk_bob",        hashed_password="ignored", role="Billing Clerk"),
         ])
         db.commit()
 

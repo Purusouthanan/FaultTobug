@@ -3,10 +3,13 @@
 # without changing any application code.
 
 role_keywords:
+  - billing clerk
+  - clerk
   - nurse
   - doctor
   - admin
   - receptionist
+
 
 action_keywords:
   modify:
@@ -65,6 +68,13 @@ resource_keywords:
     - appointment
     - appointments
     - schedule
+  billing:
+    - billing
+    - bill
+    - invoice
+    - payment
+    - charges
+
 
 # Maps (role, action, resource) to expected HTTP behaviour via rbac.yaml lookup
 # These strings are checked in the incident text to determine actual_result
